@@ -10,7 +10,7 @@ SOURCE_DIR=$HOME_DIR/src/github/$PROJECT
 DEPLOY_DIR=$HOME_DIR/deploy/$PROJECT
 
 ANTLR_OUTPUT_DIR=$SOURCE_DIR/src/main/java/kr/andold/terran/bhistory/antlr
-ANTLR_JAR_FILE=$SOURCE_DIR/src/main/resources/antlr-4.10.1-complete.jar
+ANTLR_JAR_FILE=$SOURCE_DIR/src/main/resources/antlr4-4.13.0-complete.jar
 ANTLR_PACKAGE=kr.andold.terran.bhistory.antlr
 
 TOMCAT_BIN_DIR=$HOME_DIR/apps/tomcat/bin

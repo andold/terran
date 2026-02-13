@@ -4,7 +4,7 @@
 SET HOME_DIR=%CD%
 SET	SOURCE_DIR=%HOME_DIR%\src\main\resources
 SET	TARGET_DIR=%HOME_DIR%\src\main\java\kr\andold\terran\bhistory\antlr
-SET	FILE_NAME_ANTLR_JAR=%HOME_DIR%\src\main\resources\antlr-4.10.1-complete.jar
+SET	FILE_NAME_ANTLR_JAR=%HOME_DIR%\src\main\resources\antlr4-4.13.0-complete.jar
 SET	PACKAGE_ANTLR=kr.andold.terran.bhistory.antlr
 @REM
 @REM
