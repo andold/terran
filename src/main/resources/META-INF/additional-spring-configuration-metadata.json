@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "application.data.path",
+    "type": "java.lang.String",
+    "description": "A description for 'application.data.path'"
+  },
+  {
+    "name": "application.zookeeper.connect.string",
+    "type": "java.lang.String",
+    "description": "A description for 'application.zookeeper.connect.string'"
+  },
+  {
+    "name": "application.zookeeper.znode.elect.path",
+    "type": "java.lang.String",
+    "description": "A description for 'application.zookeeper.znode.elect.path'"
+  }
+]}

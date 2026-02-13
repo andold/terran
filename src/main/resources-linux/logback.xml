@@ -1,0 +1,46 @@
+<!DOCTYPE configuration>
+<configuration debug="false" scan="true" scanPeriod="30 seconds">
+	<property name="LOG_PATH" value="/home/andold/logs/terran" />
+	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<Pattern>%d{HH:mm:ss} [%-5level] %-40.40logger{40} :%4line %msg%n</Pattern>
+		</encoder>
+	</appender>
+	<appender name="general" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_PATH}/general.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/general.log.%i</fileNamePattern>
+			<maxIndex>9</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>8MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-40.40logger{40} :%4line %msg%n</Pattern>
+		</encoder>
+	</appender>
+	<appender name="terran" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_PATH}/terran.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/bhistory.log.%i</fileNamePattern>
+			<maxIndex>9</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>8MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-40.40logger{40} :%4line %msg%n</Pattern>
+		</encoder>
+	</appender>
+
+	<logger name="kr.andold.terran" additivity="false" value="debug">
+		<appender-ref ref="terran" />
+	</logger>
+
+	<root value="info">
+		<appender-ref ref="general" />
+	</root>
+
+</configuration>
