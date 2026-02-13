@@ -8,6 +8,11 @@ THIS_SCRIPT_FILE_NAME=install-$PROJECT-$PROFILE.sh
 HOME_DIR=/home/andold
 SOURCE_DIR=$HOME_DIR/src/github/$PROJECT
 DEPLOY_DIR=$HOME_DIR/deploy/$PROJECT
+
+ANTLR_OUTPUT_DIR=$SOURCE_DIR/src/main/java/kr/andold/terran/bhistory/antlr
+ANTLR_JAR_FILE=$SOURCE_DIR/src/main/resources/antlr-4.10.1-complete.jar
+ANTLR_PACKAGE=kr.andold.terran.bhistory.antlr
+
 TOMCAT_BIN_DIR=$HOME_DIR/apps/tomcat/bin
 #
 #
@@ -79,7 +84,17 @@ cd $SOURCE_DIR
 git clean -f
 #
 #
+# antlr 문법 전처리
 #
+cd	$SOURCE_DIR
+#
+rm -f $ANTLR_OUTPUT_DIR/*
+java -jar $ANTLR_JAR_FILE -encoding UTF8 -package $ANTLR_PACKAGE -visitor -o $ANTLR_OUTPUT_DIR $SOURCE_DIR/src/main/resources/BigHistoryDateTime.g4
+java -jar $ANTLR_JAR_FILE -encoding UTF8 -package $ANTLR_PACKAGE -visitor -o $ANTLR_OUTPUT_DIR $SOURCE_DIR/src/main/resources/DateTime.g4
+java -jar $ANTLR_JAR_FILE -encoding UTF8 -package $ANTLR_PACKAGE -visitor -o $ANTLR_OUTPUT_DIR $SOURCE_DIR/src/main/resources/UniversalDateTime.g4
+#
+#
+# 빌드 실행
 #
 cd	$SOURCE_DIR
 #
@@ -95,7 +110,7 @@ cd $DEPLOY_DIR/doc_base
 rm -fr *
 #
 #
-#
+# 빌드 결과물 배포 경로에 복사
 #
 FILE_NAME_WAR=$SOURCE_DIR/build/libs/$PROJECT-$VERSION.war
 echo "Extract files from in $FILE_NAME_WAR"

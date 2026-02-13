@@ -2,10 +2,10 @@
 #
 #
 HOME_DIR=/home/andold
-SOURCE_DIR=$HOME_DIR/src/eclipse-workspace/bhistory
-TARGET_DIR=$HOME_DIR/src/main/java/kr/andold/bhistory/antlr
+SOURCE_DIR=$HOME_DIR/src/eclipse-workspace/terran
+TARGET_DIR=$HOME_DIR/src/main/java/kr/andold/terran/bhistory/antlr
 FILE_NAME_ANTLR_JAR=$HOME_DIR/src/main/resources/antlr-4.10.1-complete.jar
-PACKAGE_ANTLR=kr.andold.bhistory.antlr
+PACKAGE_ANTLR=kr.andold.terran.bhistory.antlr
 #
 #
 #
