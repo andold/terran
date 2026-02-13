@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("api")
+@RequestMapping("bhistory")
 public class ApiBigHistoryController {
 	@Autowired private BigHistoryService service;
 
