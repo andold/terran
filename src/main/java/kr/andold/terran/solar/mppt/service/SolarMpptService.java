@@ -52,25 +52,25 @@ public class SolarMpptService implements CrudService<SolarMpptParam, SolarMpptDo
 	private static final Sort DEFAULT_SORT = Sort.by(Order.asc("base"));
 	private static final Pageable DEFAULT_PAGEABLE = PageRequest.of(0, 1024 * 1024, DEFAULT_SORT);
 
-	@Getter private static String webdriverPath;
+	@Getter private static String seleniumWebdriverPath;
 	@Value("${application.selenium.webdriver.chrome.driver}")
-	public void setWebdriverPath(String value) {
-		log.info("{} setWebdriverPath(『{}』)", Utility.indentMiddle(), value);
-		webdriverPath = value;
+	public void setSeleniumWebdriverPath(String value) {
+		log.info("{} setSeleniumWebdriverPath(『{}』)", Utility.indentMiddle(), value);
+		seleniumWebdriverPath = value;
 	}
 
-	@Getter private static String userDataDir;
+	@Getter private static String seleniumUserDataDir;
 	@Value("${application.selenium.user.data.dir}")
-	public void setUserDataDir(String value) {
-		log.info("{} setUserDataDir(『{}』)", Utility.indentMiddle(), value);
-		userDataDir = value;
+	public void setSeleniumUserDataDir(String value) {
+		log.info("{} setSeleniumUserDataDir(『{}』)", Utility.indentMiddle(), value);
+		seleniumUserDataDir = value;
 	}
 
-	@Getter private static String userDataPath;
+	@Getter private static String applicationDataPath;
 	@Value("${application.data.path}")
-	public void setUserDataPath(String value) {
-		log.info("{} setUserDataPath(『{}』)", Utility.indentMiddle(), value);
-		userDataPath = value;
+	public void setApplicationDataPath(String value) {
+		log.info("{} setApplicationDataPath(『{}』)", Utility.indentMiddle(), value);
+		applicationDataPath = value;
 	}
 
 	@Autowired private SolarMpptRepository repository;
@@ -493,10 +493,10 @@ public class SolarMpptService implements CrudService<SolarMpptParam, SolarMpptDo
 	}
 
 	public static ChromeDriverWrapper createDriver(boolean fHeadless, String postfix) {
-		log.info("{} createDriver({}) - 『{}』", Utility.indentStart(), fHeadless, getWebdriverPath());
+		log.info("{} createDriver({}) - 『{}』", Utility.indentStart(), fHeadless, getSeleniumWebdriverPath());
 		long started = System.currentTimeMillis();
 
-		System.setProperty("webdriver.chrome.driver", getWebdriverPath());
+		System.setProperty("webdriver.chrome.driver", getSeleniumWebdriverPath());
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--disable-background-networking");	//	timeout 관련
 		options.addArguments("--disable-blink-features=AutomationControlled");
@@ -510,13 +510,13 @@ public class SolarMpptService implements CrudService<SolarMpptParam, SolarMpptDo
 		}
 		options.addArguments("--no-sandbox");
 		options.addArguments("--remote-allow-origins=*");
-		options.addArguments(String.format("--user-data-dir=%s-%s", getUserDataDir(), postfix));
+		options.addArguments(String.format("--user-data-dir=%s-%s", getSeleniumUserDataDir(), postfix));
 		options.addArguments("--window-position=0,0");
 		options.addArguments(String.format("--window-size=%d,%d", 1920 * 1, 1090 * 1 - 256));
 		options.setPageLoadStrategy(PageLoadStrategy.NONE);
 		ChromeDriverWrapper chromeDriver = new ChromeDriverWrapper(options);
 
-		log.info("{} 『{}』 ChromeDriverWrapper({}) - 『{}:{}』 - {}", Utility.indentEnd(), chromeDriver, fHeadless, getWebdriverPath(), getUserDataDir(), Utility.toStringPastTimeReadable(started));
+		log.info("{} 『{}』 ChromeDriverWrapper({}) - 『{}:{}』 - {}", Utility.indentEnd(), chromeDriver, fHeadless, getSeleniumWebdriverPath(), getSeleniumUserDataDir(), Utility.toStringPastTimeReadable(started));
 		return chromeDriver;
 	}
 
@@ -720,7 +720,7 @@ public class SolarMpptService implements CrudService<SolarMpptParam, SolarMpptDo
 		log.info("{} backup()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		String fullpath = getUserDataPath();
+		String fullpath = getSeleniumUserDataDir();
 		List<SolarMpptDomain> domains = search(null);
 		String json = Utility.toStringJsonLine(domains);
 		Utility.write(String.format("%s/solar-mppt.json", fullpath), json);

@@ -3,7 +3,6 @@ package kr.andold.terran.solar.mppt.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import kr.andold.terran.ApplicationContextProvider;
@@ -27,13 +26,6 @@ public class SolarMpptBackupJob implements JobInterface {
 
 	@Autowired private SolarMpptService service;
 	
-	@Getter private static String userDataPath;
-	@Value("${user.data.path:/home/andold/data/test-exercise}")
-	public void setUserDataPath(String value) {
-		log.info("{} setUserDataPath(『{}』)", Utility.indentMiddle(), value);
-		userDataPath = value;
-	}
-
 	@Override
 	public STATUS call() throws Exception {
 		log.info("{} SolarMpptBackupJob::call()", Utility.indentStart());
@@ -50,7 +42,7 @@ public class SolarMpptBackupJob implements JobInterface {
 		log.info("{} backup()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		String fullpath = getUserDataPath();
+		String fullpath = SolarMpptService.getApplicationDataPath();
 		List<SolarMpptDomain> domains = service.search(null);
 		String json = Utility.toStringJsonLine(domains);
 		Utility.write(String.format("%s/solar-mppt.json", fullpath), json);
