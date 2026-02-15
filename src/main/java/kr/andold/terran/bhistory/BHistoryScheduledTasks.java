@@ -9,8 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import kr.andold.terran.bhistory.service.BackupJob;
-import kr.andold.terran.bhistory.service.JobService;
-import kr.andold.terran.bhistory.service.ZookeeperClient;
+import kr.andold.terran.service.JobService;
+import kr.andold.terran.service.ZookeeperClient;
 import kr.andold.utils.Utility;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Configuration
 @EnableScheduling
-public class ScheduledTasks {
-	@Autowired private JobService jobService;
+public class BHistoryScheduledTasks {
 	@Autowired private ZookeeperClient zookeeperClient;
 
 	@Getter private static String userDataPath;
@@ -32,27 +31,6 @@ public class ScheduledTasks {
 			log.info("{} NOT EXIST PATH setDataPath({})", Utility.indentMiddle(), value);
 			directory.mkdir();
 		}
-	}
-
-	@Scheduled(initialDelay = 1000 * 10, fixedDelay = Long.MAX_VALUE)
-	public void once() {
-		log.info("{} once()", Utility.indentStart());
-
-		zookeeperClient.run();
-
-		log.info("{} once()", Utility.indentEnd());
-	}
-
-	// 1초쉬고
-	@Scheduled(initialDelay = 1000 * 16, fixedDelay = 1000)
-	public void secondly() {
-		jobService.run();
-	}
-
-	// 매분
-	@Scheduled(cron = "0 * * * * *")
-	public void minutely() {
-		jobService.status(zookeeperClient.status(true));
 	}
 
 	// 매일

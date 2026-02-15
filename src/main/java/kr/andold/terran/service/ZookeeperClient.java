@@ -1,4 +1,4 @@
-package kr.andold.terran.bhistory.service;
+package kr.andold.terran.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,10 @@ public class ZookeeperClient extends kr.andold.utils.ZookeeperClient {
 		super.run(zookeeperConnectString, zookeeperZnodeElectPath);
 		
 		log.info("{} run() - 『{}』『{}』", Utility.indentEnd(), zookeeperConnectString, zookeeperZnodeElectPath);
+	}
+
+	public static boolean isTestEnvironment() {
+		return getZookeeperZnodeElectPath().contains("test");
 	}
 
 }
