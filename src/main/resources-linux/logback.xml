@@ -24,7 +24,33 @@
 	<appender name="terran" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<File>${LOG_PATH}/terran.log</File>
 		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/terran.log.%i</fileNamePattern>
+			<maxIndex>9</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>8MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-40.40logger{40} :%4line %msg%n</Pattern>
+		</encoder>
+	</appender>
+	<appender name="bhistory" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_PATH}/bhistory.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
 			<fileNamePattern>${LOG_PATH}/bhistory.log.%i</fileNamePattern>
+			<maxIndex>9</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>8MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-40.40logger{40} :%4line %msg%n</Pattern>
+		</encoder>
+	</appender>
+	<appender name="solar-mppt" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_PATH}/solar-mppt.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/solar-mppt.log.%i</fileNamePattern>
 			<maxIndex>9</maxIndex>
 		</rollingPolicy>
 		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
@@ -37,6 +63,12 @@
 
 	<logger name="kr.andold.terran" additivity="false" value="debug">
 		<appender-ref ref="terran" />
+	</logger>
+	<logger name="kr.andold.terran.bhistory" additivity="true" value="debug">
+		<appender-ref ref="bhistory" />
+	</logger>
+	<logger name="kr.andold.terran.solar.mppt" additivity="true" value="debug">
+		<appender-ref ref="solar-mppt" />
 	</logger>
 
 	<root value="info">
