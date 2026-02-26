@@ -12,7 +12,7 @@ import kr.andold.terran.service.ZookeeperClient;
 
 @Configuration
 @EnableScheduling
-public class ScheduledTasks {
+public class IcsScheduledTasks {
 	@Autowired private ZookeeperClient zookeeperClient;
 
 	// 매일
