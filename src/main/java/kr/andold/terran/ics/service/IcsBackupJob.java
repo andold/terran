@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 @Service
-public class BackupJob implements JobInterface {
+public class IcsBackupJob implements JobInterface {
 	@Builder.Default @Getter @Setter private Long timeout = 60L;
 	@Setter private String dataPath;
 
@@ -30,7 +30,7 @@ public class BackupJob implements JobInterface {
 		log.info("{} BackupJob::call()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		BackupJob that = (BackupJob) ApplicationContextProvider.getBean(BackupJob.class);
+		IcsBackupJob that = (IcsBackupJob) ApplicationContextProvider.getBean(IcsBackupJob.class);
 		that.setDataPath(dataPath);
 		STATUS result = that.main();
 

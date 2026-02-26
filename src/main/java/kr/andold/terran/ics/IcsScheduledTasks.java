@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import kr.andold.terran.ics.service.BackupJob;
+import kr.andold.terran.ics.service.IcsBackupJob;
 import kr.andold.terran.ics.service.IcsService;
 import kr.andold.terran.service.JobService;
 import kr.andold.terran.service.ZookeeperClient;
@@ -19,7 +19,7 @@ public class IcsScheduledTasks {
 	@Scheduled(cron = "0 0 0 * * *")
 	public void daily() {
 		if (zookeeperClient.isMaster()) {
-			JobService.getQueue2().offer(BackupJob.builder().dataPath(IcsService.getUserDataPath()).build());
+			JobService.getQueue2().offer(IcsBackupJob.builder().dataPath(IcsService.getUserDataPath()).build());
 		}
 	}
 

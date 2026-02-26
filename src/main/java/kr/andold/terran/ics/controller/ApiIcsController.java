@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.andold.terran.ics.domain.IcsCalendarDomain;
 import kr.andold.terran.ics.domain.IcsComponentDomain;
 import kr.andold.terran.ics.domain.IcsParam;
-import kr.andold.terran.ics.service.BackupJob;
+import kr.andold.terran.ics.service.IcsBackupJob;
 import kr.andold.terran.ics.service.IcsService;
 import kr.andold.terran.service.JobService;
 import kr.andold.utils.Utility;
@@ -121,7 +121,7 @@ public class ApiIcsController {
 	public void backup() {
 		log.info("{} backup()", Utility.indentStart());
 
-		JobService.getQueue1().offer(BackupJob.builder().dataPath(IcsService.getUserDataPath()).build());
+		JobService.getQueue1().offer(IcsBackupJob.builder().dataPath(IcsService.getUserDataPath()).build());
 
 		log.info("{} backup()", Utility.indentEnd());
 	}
