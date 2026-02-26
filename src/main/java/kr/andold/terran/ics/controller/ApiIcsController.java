@@ -24,6 +24,7 @@ import kr.andold.terran.ics.domain.IcsParam;
 import kr.andold.terran.ics.service.IcsBackupJob;
 import kr.andold.terran.ics.service.IcsService;
 import kr.andold.terran.service.JobService;
+import kr.andold.terran.service.TerranService;
 import kr.andold.utils.Utility;
 import lombok.extern.slf4j.Slf4j;
 
@@ -121,7 +122,7 @@ public class ApiIcsController {
 	public void backup() {
 		log.info("{} backup()", Utility.indentStart());
 
-		JobService.getQueue1().offer(IcsBackupJob.builder().dataPath(IcsService.getUserDataPath()).build());
+		JobService.getQueue1().offer(IcsBackupJob.builder().dataPath(TerranService.getApplicationDataPath()).build());
 
 		log.info("{} backup()", Utility.indentEnd());
 	}

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +27,6 @@ import kr.andold.terran.ics.entity.VCalendarEntity;
 import kr.andold.terran.ics.repository.VCalendarComponentRepository;
 import kr.andold.terran.ics.repository.VCalendarRepository;
 import kr.andold.utils.Utility;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -47,13 +45,6 @@ public class IcsService {
 	private VCalendarComponentRepository vcalendarComponentRepository;
 	@Autowired
 	private VCalendarRepository vcalendarRepository;
-
-	@Getter private static String userDataPath;
-	@Value("${user.data.path}")
-	public void setUserDataPath(String value) {
-		log.info("{} setUserDataPath(『{}』)", Utility.indentMiddle(), value);
-		userDataPath = value;
-	}
 
 	public IcsParam upload(MultipartFile file, Integer vcalendarId) {
 		log.info("{} upload(..., {})", Utility.indentStart(), vcalendarId);
