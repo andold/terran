@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import kr.andold.terran.ics.service.IcsBackupJob;
 import kr.andold.terran.service.JobService;
+import kr.andold.terran.service.TerranService;
 import kr.andold.terran.service.ZookeeperClient;
 import kr.andold.utils.Utility;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,14 @@ public class ScheduledTasks {
 		log.info("{} {} {} minutely()", Utility.indentMiddle(), zookeeperClient.status(true), jobService.status());
 
 		log.trace("{} minutely() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
+	}
+
+	// 매일
+	@Scheduled(cron = "0 0 0 * * *")
+	public void daily() {
+		if (zookeeperClient.isMaster()) {
+			JobService.getQueue2().offer(IcsBackupJob.builder().dataPath(TerranService.getApplicationDataPath()).build());
+		}
 	}
 
 }
