@@ -23,7 +23,8 @@ public class IcsServiceTest {
 	@Test
 	public void downloadIcs() {
 		assertThat(service);
-		log.info(service.downloadIcs(1028));
+		String ics = service.downloadIcs(1028);
+		log.info("ics = {}", Utility.ellipsisEscape(ics, 64, 64));
 	}
 
 }

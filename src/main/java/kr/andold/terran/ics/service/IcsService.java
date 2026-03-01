@@ -34,7 +34,12 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.validate.ValidationResult;
 
 @Slf4j
 @Service
@@ -363,20 +368,47 @@ public class IcsService {
 		List<IcsComponentDomain> domains = search(vcalendarId);
 		ComponentList<CalendarComponent> components = new ComponentList<CalendarComponent>();
 		for (IcsComponentDomain domain : domains) {
-			components.add(domain.getComponent());
+			CalendarComponent component = domain.getComponent();
+			try {
+				ValidationResult result = component.validate();
+				if (result.hasErrors()) {
+					log.warn("{} ERROR::{} downloadIcs({}) - {}", Utility.indentMiddle(), result, vcalendarId, component);
+					continue;
+				}
+
+				ComponentList<CalendarComponent> only = new ComponentList<CalendarComponent>();
+				only.add(component);
+				Calendar calendar = new Calendar(properties(), only);
+				StringWriter sw = new StringWriter();
+				CalendarOutputter outputter = new CalendarOutputter();
+				outputter.output(calendar, sw);
+
+				components.add(component);
+			} catch (Exception e) {
+				log.warn("{} Exception::{} downloadIcs({}) - {}", Utility.indentMiddle(), e.getLocalizedMessage(), vcalendarId, component);
+			}
 		}
 
-		Calendar calendar = new Calendar(components);
+		Calendar calendar = new Calendar(properties(), components);
 		StringWriter sw = new StringWriter();
 		try {
 			CalendarOutputter outputter = new CalendarOutputter();
 			outputter.output(calendar, sw);
 			return sw.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.warn("{} Exception::{} downloadIcs({})", Utility.indentMiddle(), e.getLocalizedMessage(), vcalendarId, e);
 		}
 
 		return "";
+	}
+
+	private PropertyList<Property> properties() {
+		PropertyList<Property> properties = new PropertyList<Property>();
+		properties.add(new ProdId("andold"));
+		Version version = new Version();
+		version.setValue(Version.VALUE_2_0);
+		properties.add(version);
+		return properties;
 	}
 
 	public IcsParam deduplicate(Integer vcalendarId) {
