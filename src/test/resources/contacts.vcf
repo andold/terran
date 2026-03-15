@@ -1,0 +1,15 @@
+BEGIN:VCARD
+VERSION:3.0
+N:;과학과 사람들;;;
+TEL:02-529-0601
+CATEGORIES:company,myContacts
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+N:;해참부산미도어묵;;;
+TEL;TYPE=CELL:051-245-2968
+URL:http\://midofoods.com/
+item1.URL:http\://midofoods.com/
+item1.X-ABLabel:homePage
+CATEGORIES:company,myContacts
+END:VCARD

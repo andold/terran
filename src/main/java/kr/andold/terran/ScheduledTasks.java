@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import kr.andold.terran.bookmark.domain.BookmarkParam;
 import kr.andold.terran.bookmark.service.BookmarkService;
 import kr.andold.terran.ics.service.IcsBackupJob;
+import kr.andold.terran.service.ContactBackupJob;
 import kr.andold.terran.service.JobService;
 import kr.andold.terran.service.TerranService;
 import kr.andold.terran.service.ZookeeperClient;
@@ -73,6 +74,7 @@ public class ScheduledTasks {
 	public void daily() {
 		if (zookeeperClient.isMaster()) {
 			JobService.getQueue2().offer(IcsBackupJob.builder().dataPath(TerranService.getApplicationDataPath()).build());
+			JobService.getQueue2().offer(ContactBackupJob.builder().build());
 
 			String yyyymmdd = LocalDate.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
 

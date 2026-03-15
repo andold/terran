@@ -1,0 +1,30 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:nsight
+N:;nsight;;;
+TEL:031-600-4255
+CATEGORIES:company,myContacts
+NOTE:\n 그룹\:company
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+FN:과학과 사람들
+N:;과학과 사람들;;;
+TEL;TYPE=VOICE:02-529-0601
+CATEGORIES:company,myContacts
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+FN:국민연금
+N:;국민연금;;;
+TEL;TYPE=WORK:1355
+CATEGORIES:company,myContacts
+NOTE:자녀 임의가입. 본인이 전화해야 한다고 함.\n 그룹\:company
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+FN:국민은행
+N:;국민은행;;;
+TEL;TYPE=VOICE:1588-9999
+CATEGORIES:company,myContacts
+END:VCARD

@@ -1,0 +1,17 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:CJ헬로모바일
+N:;CJ헬로모바일;;;
+EMAIL;TYPE=WORK:mireaob@naver.com
+TEL;TYPE=VOICE:1688-0022
+CATEGORIES:company,myContacts
+NOTE:\n 그룹\:company\n\n 그룹\:company\n 그룹\:company
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+FN:NELO2
+N:;NELO2;;;
+TEL;TYPE=VOICE:031-784-1274
+CATEGORIES:company,myContacts
+NOTE:\n 그룹:company\n 그룹:company
+END:VCARD
