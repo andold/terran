@@ -71,7 +71,7 @@
 		<appender-ref ref="solar-mppt" />
 	</logger>
 
-	<root value="info">
+	<root value="warn">
 		<appender-ref ref="general" />
 	</root>
 
