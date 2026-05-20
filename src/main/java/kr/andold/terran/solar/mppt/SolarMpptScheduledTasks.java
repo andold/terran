@@ -28,7 +28,7 @@ public class SolarMpptScheduledTasks {
 	public void minutely5() {
 		log.trace("{} minutely5()", Utility.indentStart());
 
-		if (zookeeperClient.isMaster()) {
+		if (zookeeperClient.isMaster() && ZookeeperClient.isTestEnvironment()) {
 			SolarMpptCrawlDetailsJob.regist(JobService.getQueue2());
 			SolarMpptMonitoringJob.regist(JobService.getQueue2());
 		}
@@ -42,7 +42,7 @@ public class SolarMpptScheduledTasks {
 		log.debug("{} hourly()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 		
-		if (zookeeperClient.isMaster()) {
+		if (zookeeperClient.isMaster() && ZookeeperClient.isTestEnvironment()) {
 			JobService.getQueue2().add(SolarMpptTsdbAggregateJob.builder()
 					.start(LocalDateTime.now().minusHours(1).truncatedTo(ChronoUnit.HOURS))
 					.end(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS))
@@ -58,9 +58,8 @@ public class SolarMpptScheduledTasks {
 		log.debug("{} daily()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		if (zookeeperClient.isMaster()) {
+		if (zookeeperClient.isMaster() && ZookeeperClient.isTestEnvironment()) {
 			JobService.getQueue2().add(SolarMpptBackupJob.builder().build());
-//			JobService.getQueue2().add(SolarMpptCrawlDetailsJob.RestartDriverJob.builder().build());
 			SolarMpptCrawlDetailsJob.RestartDriverJob.regist(JobService.getQueue2());
 			JobService.getQueue2().add(SolarMpptTsdbAggregateJob.builder()
 					.start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS))
