@@ -224,18 +224,19 @@ public class ContactMapService {
 		}
 
 		List<ContactMapDomain> result = new ArrayList<>();
-		for (ContactMapEntity entity : domains) {
-			ContactMapEntity created = create(entity);
-			result.add(ContactMapDomain.of(created));
+		for (ContactMapDomain domain : domains) {
+			ContactMapDomain created = create(domain);
+			result.add(created);
 		}
 		log.info("{} 『#{}』 create(#{}) - {}", Utility.indentEnd(), null, Utility.size(domains), Utility.toStringPastTimeReadable(started));
 		return null;
 	}
 
 	@Modifying
-	public ContactMapEntity create(ContactMapEntity entity) {
+	public ContactMapDomain create(ContactMapDomain domain) {
+		ContactMapEntity entity = domain.toEntity();
 		ContactMapEntity created = repository.saveAndFlush(entity);
-		return created;
+		return ContactMapDomain.of(created);
 	}
 
 	private List<ContactMapDomain> prepareCreate(List<ContactMapDomain> domains) {
