@@ -3,7 +3,6 @@ package kr.andold.terran.solar.mppt;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,20 +14,22 @@ import kr.andold.terran.solar.mppt.service.SolarMpptCrawlDetailsJob;
 import kr.andold.terran.solar.mppt.service.SolarMpptMonitoringJob;
 import kr.andold.terran.solar.mppt.service.SolarMpptTsdbAggregateJob;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
 @EnableScheduling
+@RequiredArgsConstructor
 public class SolarMpptScheduledTasks {
-	@Autowired private ZookeeperClient zookeeperClient;
+	private final ZookeeperClient zookeeperClient;
 
 	// 매5분
 	@Scheduled(cron = "0 */5 * * * *")
 	public void minutely5() {
 		log.trace("{} minutely5()", Utility.indentStart());
 
-		if (zookeeperClient.isMaster() && ZookeeperClient.isTestEnvironment()) {
+		if (zookeeperClient.isMaster() && !ZookeeperClient.isTestEnvironment()) {
 			SolarMpptCrawlDetailsJob.regist(JobService.getQueue2());
 			SolarMpptMonitoringJob.regist(JobService.getQueue2());
 		}
@@ -42,7 +43,7 @@ public class SolarMpptScheduledTasks {
 		log.debug("{} hourly()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 		
-		if (zookeeperClient.isMaster() && ZookeeperClient.isTestEnvironment()) {
+		if (zookeeperClient.isMaster() && !ZookeeperClient.isTestEnvironment()) {
 			JobService.getQueue2().add(SolarMpptTsdbAggregateJob.builder()
 					.start(LocalDateTime.now().minusHours(1).truncatedTo(ChronoUnit.HOURS))
 					.end(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS))
@@ -58,7 +59,7 @@ public class SolarMpptScheduledTasks {
 		log.debug("{} daily()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		if (zookeeperClient.isMaster() && ZookeeperClient.isTestEnvironment()) {
+		if (zookeeperClient.isMaster() && !ZookeeperClient.isTestEnvironment()) {
 			JobService.getQueue2().add(SolarMpptBackupJob.builder().build());
 			SolarMpptCrawlDetailsJob.RestartDriverJob.regist(JobService.getQueue2());
 			JobService.getQueue2().add(SolarMpptTsdbAggregateJob.builder()
