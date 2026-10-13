@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 #
-HOME_DIR=/home/andold
-SOURCE_DIR=$HOME_DIR/src/eclipse-workspace/terran
-TARGET_DIR=$HOME_DIR/src/main/java/kr/andold/terran/bhistory/antlr
-FILE_NAME_ANTLR_JAR=$HOME_DIR/src/main/resources/antlr4-4.13.0-complete.jar
+SOURCE_DIR=$(cd "$(dirname "$0")" && pwd)
+GRAMMAR_DIR=$SOURCE_DIR/src/main/resources
+TARGET_DIR=$SOURCE_DIR/src/main/java/kr/andold/terran/bhistory/antlr
+FILE_NAME_ANTLR_JAR=$SOURCE_DIR/src/main/resources/antlr4-4.13.0-complete.jar
 PACKAGE_ANTLR=kr.andold.terran.bhistory.antlr
 #
 #
@@ -17,6 +17,6 @@ rm -f $TARGET_DIR/*
 #
 #
 #
-java -jar $FILE_NAME_ANTLR_JAR -encoding UTF8 -package $PACKAGE_ANTLR -visitor -o $TARGET_DIR $SOURCE_DIR/src/main/resources/antlr4v2/BigHistoryDateTime.g4
-java -jar $FILE_NAME_ANTLR_JAR -encoding UTF8 -package $PACKAGE_ANTLR -visitor -o $TARGET_DIR $SOURCE_DIR/src/main/resources/antlr4v2/DateTime.g4
-java -jar $FILE_NAME_ANTLR_JAR -encoding UTF8 -package $PACKAGE_ANTLR -visitor -o $TARGET_DIR $SOURCE_DIR/src/main/resources/antlr4v2/UniversalDateTime.g4
+java -jar $FILE_NAME_ANTLR_JAR -encoding UTF8 -package $PACKAGE_ANTLR -visitor -o $TARGET_DIR $GRAMMAR_DIR/BigHistoryDateTime.g4
+java -jar $FILE_NAME_ANTLR_JAR -encoding UTF8 -package $PACKAGE_ANTLR -visitor -o $TARGET_DIR $GRAMMAR_DIR/DateTime.g4
+java -jar $FILE_NAME_ANTLR_JAR -encoding UTF8 -package $PACKAGE_ANTLR -visitor -o $TARGET_DIR $GRAMMAR_DIR/UniversalDateTime.g4
