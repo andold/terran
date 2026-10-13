@@ -61,17 +61,17 @@
 		</encoder>
 	</appender>
 
-	<logger name="kr.andold.terran.bhistory" additivity="false" value="debug">
+	<logger name="kr.andold.terran.bhistory" additivity="false" level="debug">
 		<appender-ref ref="bhistory" />
 	</logger>
-	<logger name="kr.andold.terran.solar.mppt" additivity="false" value="debug">
+	<logger name="kr.andold.terran.solar.mppt" additivity="false" level="debug">
 		<appender-ref ref="solar-mppt" />
 	</logger>
-	<logger name="kr.andold.terran" additivity="true" value="debug">
+	<logger name="kr.andold.terran" additivity="true" level="debug">
 		<appender-ref ref="terran" />
 	</logger>
 
-	<root value="info">
+	<root level="info">
 		<appender-ref ref="general" />
 	</root>
 
