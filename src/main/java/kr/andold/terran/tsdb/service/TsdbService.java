@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,17 +27,19 @@ import kr.andold.terran.tsdb.param.TsdbParam;
 import kr.andold.terran.tsdb.repository.TsdbRepository;
 import kr.andold.terran.tsdb.repository.TsdbSpecification;
 import kr.andold.utils.persist.CrudList;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TsdbService implements CrudService<TsdbParam, TsdbDomain, TsdbEntity> {
 	private static final Sort DEFAULT_SORT = Sort.by(Order.asc("base"));
 	private static final Pageable DEFAULT_PAGEABLE = PageRequest.of(0, 1024 * 1024, DEFAULT_SORT);
 	private static final String GROUP_DEFAULT = "그룹";
 	private static final String MEMBER_DEFAULT = "멤버";
 
-	@Autowired private TsdbRepository repository;
+	private final TsdbRepository repository;
 
 	@Modifying
 	public TsdbParam update(TsdbDomain domain) {

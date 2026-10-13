@@ -2,7 +2,6 @@ package kr.andold.terran.bhistory;
 
 import java.io.File;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -13,13 +12,15 @@ import kr.andold.terran.service.JobService;
 import kr.andold.terran.service.ZookeeperClient;
 import kr.andold.utils.Utility;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
 @EnableScheduling
+@RequiredArgsConstructor
 public class BHistoryScheduledTasks {
-	@Autowired private ZookeeperClient zookeeperClient;
+	private final ZookeeperClient zookeeperClient;
 
 	@Getter private static String userDataPath;
 	@Value("${application.data.path}")

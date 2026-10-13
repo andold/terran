@@ -6,7 +6,6 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,14 +23,16 @@ import kr.andold.terran.param.ContactParam;
 import kr.andold.terran.service.ContactMapService;
 import kr.andold.terran.service.ContactService;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("contact")
+@RequiredArgsConstructor
 public class ApiContactController {
-	@Autowired private ContactService service;
-	@Autowired private ContactMapService mapService;
+	private final ContactService service;
+	private final ContactMapService mapService;
 
 	@GetMapping(value = {""})
 	public List<ContactDomain> index() {

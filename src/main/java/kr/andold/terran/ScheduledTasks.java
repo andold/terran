@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,15 +19,17 @@ import kr.andold.terran.service.JobService;
 import kr.andold.terran.service.TerranService;
 import kr.andold.terran.service.ZookeeperClient;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
 @EnableScheduling
+@RequiredArgsConstructor
 public class ScheduledTasks {
-	@Autowired private BookmarkService bookmarkService;
-	@Autowired private JobService jobService;
-	@Autowired private ZookeeperClient zookeeperClient;
+	private final BookmarkService bookmarkService;
+	private final JobService jobService;
+	private final ZookeeperClient zookeeperClient;
 
 	@Scheduled(initialDelay = 1000 * 10, fixedDelay = Long.MAX_VALUE)
 	public void once() {

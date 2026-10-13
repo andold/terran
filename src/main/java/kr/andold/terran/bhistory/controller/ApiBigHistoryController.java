@@ -2,7 +2,6 @@ package kr.andold.terran.bhistory.controller;
 
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,13 +20,15 @@ import kr.andold.terran.bhistory.domain.BigHistorySearchRequest;
 import kr.andold.terran.bhistory.entity.BigHistoryEntity;
 import kr.andold.terran.bhistory.service.BigHistoryService;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("bhistory")
+@RequiredArgsConstructor
 public class ApiBigHistoryController {
-	@Autowired private BigHistoryService service;
+	private final BigHistoryService service;
 
 	@GetMapping("{id}")
     public @ResponseBody BigHistoryEntity getBigHistory(@PathVariable Integer id, @RequestBody(required=false) BigHistorySearchRequest request) {

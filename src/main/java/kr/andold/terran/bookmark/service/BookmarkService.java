@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,17 +20,18 @@ import kr.andold.terran.bookmark.domain.BookmarkParameter;
 import kr.andold.terran.bookmark.entity.Bookmark;
 import kr.andold.terran.bookmark.repository.BookmarkRepository;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class BookmarkService {
 	private static final Integer ROOT_ID = 53755;
 	private static final Bookmark ROOT_DEFAULT = Bookmark.builder().id(ROOT_ID).title("잡다한 인연들").url("http://andold.iptime.org/").description("잡다한 인연들").pid(
 		ROOT_ID).count(0).created(new Date()).updated(new Date()).build();
 
-	@Autowired
-	private BookmarkRepository repository;
+	private final BookmarkRepository repository;
 
 	public List<Bookmark> list() {
 		log.info("{} list()", Utility.indentStart());

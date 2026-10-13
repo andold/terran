@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -31,17 +30,17 @@ import kr.andold.terran.bhistory.entity.BigHistoryEntity;
 import kr.andold.terran.bhistory.repository.BigHistoryRepository;
 import kr.andold.terran.bhistory.repository.BigHistorySpecification;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class BigHistoryService {
 	private double VERSION = 0.1;
 
-	@Autowired
-	private BigHistoryRepository repository;
-	@Autowired
-	private ScalableVectorGraphicsService svgService;
+	private final BigHistoryRepository repository;
+	private final ScalableVectorGraphicsService svgService;
 
 	public Page<BigHistoryEntity> list(Pageable pageable, BigHistorySearchRequest form) {
 		log.info("{} list({}, {})", Utility.indentStart(), pageable, Utility.toStringJson(form));

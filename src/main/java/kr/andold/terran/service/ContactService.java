@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.Modifying;
@@ -37,16 +36,16 @@ import kr.andold.terran.repository.ContactRepository;
 import kr.andold.terran.repository.ContactSpecification;
 import kr.andold.utils.Utility;
 import kr.andold.utils.persist.CrudList;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ContactService {
-	@Autowired
-	private ContactRepository repository;
+	private final ContactRepository repository;
 
-	@Autowired
-	private ContactMapService contactMapService;
+	private final ContactMapService contactMapService;
 
 	private static final Sort DEFAULT_SORT = Sort.by(Direction.ASC, "fn", "value");
 	

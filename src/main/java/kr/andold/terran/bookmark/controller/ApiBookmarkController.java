@@ -5,7 +5,6 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,13 +24,15 @@ import kr.andold.terran.bookmark.domain.BookmarkParameter;
 import kr.andold.terran.bookmark.entity.Bookmark;
 import kr.andold.terran.bookmark.service.BookmarkService;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("bookmark")
+@RequiredArgsConstructor
 public class ApiBookmarkController {
-	@Autowired private BookmarkService service;
+	private final BookmarkService service;
 
 	@PostMapping(value = {"search"})
 	public List<Bookmark> search(@RequestBody BookmarkParameter parameter) {

@@ -15,7 +15,6 @@ import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,10 +38,12 @@ import kr.andold.terran.solar.mppt.repository.SolarMpptRepository;
 import kr.andold.terran.solar.mppt.repository.SolarMpptSpecification;
 import kr.andold.utils.persist.CrudList;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SolarMpptService implements CrudService<SolarMpptParam, SolarMpptDomain, SolarMpptEntity> {
 	public static final String URL = "http://app.gz529.com/VuGvSgOfDB.php/index/login?login_type=user";
 	public static final String USERNAME = "01068106479";
@@ -73,7 +74,7 @@ public class SolarMpptService implements CrudService<SolarMpptParam, SolarMpptDo
 		applicationDataPath = value;
 	}
 
-	@Autowired private SolarMpptRepository repository;
+	private final SolarMpptRepository repository;
 	
 	private ChromeDriverWrapper driver = null;
 

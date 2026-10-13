@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +26,7 @@ import kr.andold.terran.ics.entity.VCalendarEntity;
 import kr.andold.terran.ics.repository.VCalendarComponentRepository;
 import kr.andold.terran.ics.repository.VCalendarRepository;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -43,13 +43,12 @@ import net.fortuna.ical4j.validate.ValidationResult;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class IcsService {
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-	@Autowired
-	private VCalendarComponentRepository vcalendarComponentRepository;
-	@Autowired
-	private VCalendarRepository vcalendarRepository;
+	private final VCalendarComponentRepository vcalendarComponentRepository;
+	private final VCalendarRepository vcalendarRepository;
 
 	public IcsParam upload(MultipartFile file, Integer vcalendarId) {
 		log.info("{} upload(..., {})", Utility.indentStart(), vcalendarId);

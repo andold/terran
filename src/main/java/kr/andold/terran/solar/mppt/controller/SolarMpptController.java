@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,14 +29,16 @@ import kr.andold.terran.solar.mppt.service.SolarMpptTsdbAggregateJob;
 import kr.andold.terran.solar.mppt.service.SolarMpptTsdbPutJob;
 import kr.andold.terran.solar.mppt.service.Utility;
 import kr.andold.utils.persist.CrudList;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("solar-mppt")
+@RequiredArgsConstructor
 public class SolarMpptController implements CrudController<SolarMpptParam, SolarMpptDomain> {
-	@Autowired private HttpServletResponse httpServletResponse;
-	@Autowired private SolarMpptService service;
+	private final HttpServletResponse httpServletResponse;
+	private final SolarMpptService service;
 
 	@PostMapping(value = {"aggregate"})
 	public void aggregate(@RequestBody SolarMpptParam param) {

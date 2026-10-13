@@ -5,7 +5,6 @@ import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,14 +16,16 @@ import kr.andold.terran.tsdb.domain.TsdbDomain;
 import kr.andold.terran.tsdb.param.TsdbParam;
 import kr.andold.terran.tsdb.service.TsdbService;
 import kr.andold.utils.persist.CrudList;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("tsdb")
+@RequiredArgsConstructor
 public class TsdbController implements CrudController<TsdbParam, TsdbDomain> {
-	@Autowired private HttpServletResponse httpServletResponse;
-	@Autowired private TsdbService service;
+	private final HttpServletResponse httpServletResponse;
+	private final TsdbService service;
 
 	@Override
 	public TsdbParam search(TsdbParam param) {

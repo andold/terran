@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
@@ -29,13 +28,14 @@ import kr.andold.terran.param.ContactMapParam;
 import kr.andold.terran.repository.ContactMapRepository;
 import kr.andold.utils.Utility;
 import kr.andold.utils.persist.CrudList;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ContactMapService {
-	@Autowired
-	private ContactMapRepository repository;
+	private final ContactMapRepository repository;
 
 	public static CrudList<ContactMapDomain> differ(List<ContactMapDomain> befores, List<ContactMapDomain> afters) {
 		Map<String, ContactMapDomain> mapBefore = makeMap(befores);

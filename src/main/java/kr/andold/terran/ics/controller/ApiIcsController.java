@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,13 +25,15 @@ import kr.andold.terran.ics.service.IcsService;
 import kr.andold.terran.service.JobService;
 import kr.andold.terran.service.TerranService;
 import kr.andold.utils.Utility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping("ics")
+@RequiredArgsConstructor
 public class ApiIcsController {
-	@Autowired private IcsService service;
+	private final IcsService service;
 
 	@PostMapping(value = {"calendar"})
 	public IcsCalendarDomain createCalendar(@RequestBody IcsCalendarDomain param) {
