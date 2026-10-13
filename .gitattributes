@@ -1,0 +1,6 @@
+# 쉘 스크립트는 Linux에서 실행되므로 항상 LF
+*.sh	text eol=lf
+gradlew	text eol=lf
+
+# Windows 배치 파일은 CRLF
+*.bat	text eol=crlf
