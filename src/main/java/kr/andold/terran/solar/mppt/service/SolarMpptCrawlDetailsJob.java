@@ -112,6 +112,12 @@ public class SolarMpptCrawlDetailsJob implements JobInterface {
 
 		SolarMpptCrawlDetailsJob that = (SolarMpptCrawlDetailsJob) ApplicationContextProvider.getBean(SolarMpptCrawlDetailsJob.class);
 		SolarMpptDomain result = that.main();
+		if (result == null) {
+			//	수집 실패시 브라우저 상태가 복구되지 않으므로 드라이버를 재시작한다
+			RestartDriverJob.regist(JobService.getQueue3());
+			log.info("{} 『#{}』 SolarMpptCrawlDetailsJob::call() - {}", Utility.indentEnd(), result, Utility.toStringPastTimeReadable(started));
+			return STATUS.FAIL_NO_RESULT;
+		}
 
 		log.info("{} 『#{}』 SolarMpptCrawlDetailsJob::call() - {}", Utility.indentEnd(), result, Utility.toStringPastTimeReadable(started));
 		return STATUS.SUCCESS;
@@ -159,8 +165,9 @@ public class SolarMpptCrawlDetailsJob implements JobInterface {
 			driver();
 			driver.manage().timeouts().implicitlyWait(DEFAULT_TIMEOUT_DURATION_LONG);
 
-			if (notDetails()) {
-				navigateDetails();
+			if (notDetails() && !navigateDetails()) {
+				log.info("{} 『{}』 SolarMpptCrawlDetailsJob::main() - {}", Utility.indentEnd(), null, Utility.toStringPastTimeReadable(started));
+				return null;
 			}
 
 			driver.manage().timeouts().implicitlyWait(DEFAULT_TIMEOUT_DURATION);
@@ -294,6 +301,10 @@ public class SolarMpptCrawlDetailsJob implements JobInterface {
 			By BY_XPATH_BUTTON_DETAILS = By.xpath("//*[@id='productIndex']//span[contains(text(),'Details')]/..");
 			log.info("{} navigateDetails() - 『{}』『{}』", Utility.indentMiddle(), "Details", driver.getText(BY_XPATH_BUTTON_DETAILS, Duration.ZERO));
 			driver.presenceOfElementLocated(BY_XPATH_BUTTON_DETAILS, DEFAULT_TIMEOUT_DURATION);
+			if (!driver.isDisplayed(BY_XPATH_BUTTON_DETAILS, Duration.ZERO)) {
+				log.info("{} 『{}』 navigateDetails() - {}", Utility.indentEnd(), false, Utility.toStringPastTimeReadable(started));
+				return false;
+			}
 			driver.clickIfExist(BY_XPATH_BUTTON_DETAILS);
 			log.info("{} navigateDetails() - 『{}』『{}』", Utility.indentMiddle(), "Details", driver.getText(BY_XPATH_BUTTON_DETAILS, Duration.ZERO));
 
