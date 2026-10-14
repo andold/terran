@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SolarMpptCrawlLogsJobTest {
-	@Autowired private SolarMpptCrawlLogsJob job;
+	@Autowired private SolarMpptCrawlLogsJob.Worker worker;
 
 
 	@BeforeEach
@@ -24,7 +24,7 @@ public class SolarMpptCrawlLogsJobTest {
 
 	@Test
 	public void testMain2() throws Exception {
-		SolarMpptParam result = job.main2(ZonedDateTime.now().minusHours(1));
+		SolarMpptParam result = worker.run(SolarMpptCrawlLogsJob.builder().start(ZonedDateTime.now().minusHours(1)).build());
 		log.info("{}", result);
 	}
 

@@ -39,7 +39,7 @@ terran은 개인용 백엔드 API 모음(Spring Boot 3.2, Java 21, PostgreSQL)�
 ### 스케줄링과 Job 큐
 
 - `ScheduledTasks`, `SolarMpptScheduledTasks`의 `@Scheduled` 메서드는 직접 작업하지 않고 `JobInterface` 구현체(`*Job`)를 `JobService.getQueue2()/getQueue3()`에 넣습니다. `JobService.run()`이 1초마다 큐를 소비합니다. 타임아웃 시 크롬 드라이버 재시작 Job(`SolarMpptCrawlDetailsJob.RestartDriverJob`)을 등록합니다.
-- Job 클래스는 `@SuperBuilder` + `@Service`인 동시에 builder로 생성되어 큐에 들어갑니다. `call()` 안에서 `ApplicationContextProvider.getBean(...)`으로 스프링 빈 인스턴스를 얻어 필드를 복사한 뒤 `main()`을 실행하는 패턴이므로, builder로 만든 인스턴스에서 `@Autowired` 필드를 직접 쓰지 마세요.
+- Job 클래스는 스프링 빈이 아닌 데이터 객체(`@Builder`/`@SuperBuilder`, 파라미터만 보유)이고, 실제 작업은 Job 안의 static 중첩 클래스 `Worker`(`@Service` + `@RequiredArgsConstructor` 생성자 주입)가 합니다. `call()`은 `ApplicationContextProvider.getBean(Worker.class)`로 Worker를 얻어 `worker.run(this)`로 위임하고, Worker는 `job.xxx`로 파라미터를 직접 읽습니다. 크롬 드라이버 같은 상태는 Worker(싱글톤)의 인스턴스 필드에 둡니다. 테스트에서는 Job 대신 `XxxJob.Worker`를 주입받거나 builder로 만든 Job의 `call()`을 호출하세요(#12).
 
 ### 다중 인스턴스 / 리더 선출
 

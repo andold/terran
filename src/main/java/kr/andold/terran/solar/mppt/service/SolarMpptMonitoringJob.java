@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.andold.terran.ApplicationContextProvider;
@@ -19,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,19 +26,17 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-@Service
 public class SolarMpptMonitoringJob implements JobInterface {
 	@Builder.Default @Getter @Setter private Long timeout = 60L;
 
-	@Autowired private SolarMpptService service;
 
 	@Override
 	public STATUS call() throws Exception {
 		log.info("{} SolarMpptMonitoringJob::call()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		SolarMpptMonitoringJob that = (SolarMpptMonitoringJob) ApplicationContextProvider.getBean(SolarMpptMonitoringJob.class);
-		STATUS result = that.main();
+		Worker worker = (Worker) ApplicationContextProvider.getBean(Worker.class);
+		STATUS result = worker.run(this);
 
 		log.info("{} 『#{}』 SolarMpptMonitoringJob::call() - {}", Utility.indentEnd(), result, Utility.toStringPastTimeReadable(started));
 		return result;
@@ -85,60 +83,67 @@ public class SolarMpptMonitoringJob implements JobInterface {
 		return true;
 	}
 
-	protected STATUS main() throws Exception {
-		log.info("{} SolarMpptMonitoringJob::main()", Utility.indentStart());
-		long started = System.currentTimeMillis();
+	@RequiredArgsConstructor
+	@Service
+	public static class Worker {
+		private final SolarMpptService service;
 
-		try {
-			ZonedDateTime start = ZonedDateTime.now().minusMinutes(20);
-			List<SolarMpptDomain> domains = service.search(SolarMpptParam.builder().start(Date.from(start.toInstant())).build());
-			if (domains == null || domains.isEmpty()) {
-				RestartDriverJob.regist(JobService.getQueue1());
-				SolarMpptCrawlDetailsJob.regist(JobService.getQueue1());
+		protected STATUS run(SolarMpptMonitoringJob job) throws Exception {
+			log.info("{} SolarMpptMonitoringJob.Worker::run()", Utility.indentStart());
+			long started = System.currentTimeMillis();
 
-				log.info("{} 『{}』 SolarMpptMonitoringJob::main() - {}", Utility.indentEnd(), STATUS.SUCCESS, Utility.toStringPastTimeReadable(started));
-				return STATUS.SUCCESS;
-			}
+			try {
+				ZonedDateTime start = ZonedDateTime.now().minusMinutes(20);
+				List<SolarMpptDomain> domains = service.search(SolarMpptParam.builder().start(Date.from(start.toInstant())).build());
+				if (domains == null || domains.isEmpty()) {
+					RestartDriverJob.regist(JobService.getQueue1());
+					SolarMpptCrawlDetailsJob.regist(JobService.getQueue1());
 
-			ZonedDateTime oneHoursAgo = ZonedDateTime.now().minusHours(1);
-			List<SolarMpptDomain> oneHours = service.search(SolarMpptParam.builder().start(Date.from(oneHoursAgo.toInstant())).build());
-			if (oneHours == null || oneHours.isEmpty()) {
-				RestartDriverJob.regist(JobService.getQueue1());
-				SolarMpptCrawlDetailsJob.regist(JobService.getQueue1());
-
-				log.info("{} 『{}』 SolarMpptMonitoringJob::main() - {}", Utility.indentEnd(), STATUS.SUCCESS, Utility.toStringPastTimeReadable(started));
-				return STATUS.SUCCESS;
-			}
-			boolean allTheSame = true;
-			Float previousTemperature = null;
-			for (SolarMpptDomain domain : oneHours) {
-				Float temperature = domain.getTemperature();
-				if (temperature == null) {
-					continue;
+					log.info("{} 『{}』 SolarMpptMonitoringJob.Worker::run() - {}", Utility.indentEnd(), STATUS.SUCCESS, Utility.toStringPastTimeReadable(started));
+					return STATUS.SUCCESS;
 				}
 
-				if (previousTemperature == null) {
-					previousTemperature = temperature;
-				}
+				ZonedDateTime oneHoursAgo = ZonedDateTime.now().minusHours(1);
+				List<SolarMpptDomain> oneHours = service.search(SolarMpptParam.builder().start(Date.from(oneHoursAgo.toInstant())).build());
+				if (oneHours == null || oneHours.isEmpty()) {
+					RestartDriverJob.regist(JobService.getQueue1());
+					SolarMpptCrawlDetailsJob.regist(JobService.getQueue1());
 
-				if (Utility.compareFloat(previousTemperature, temperature, 0.01f) != 0) {
-					allTheSame = false;
-					break;
+					log.info("{} 『{}』 SolarMpptMonitoringJob.Worker::run() - {}", Utility.indentEnd(), STATUS.SUCCESS, Utility.toStringPastTimeReadable(started));
+					return STATUS.SUCCESS;
 				}
-			}
-			if (allTheSame) {
-				RestartDriverJob.regist(JobService.getQueue1());
-				SolarMpptCrawlDetailsJob.regist(JobService.getQueue1());
+				boolean allTheSame = true;
+				Float previousTemperature = null;
+				for (SolarMpptDomain domain : oneHours) {
+					Float temperature = domain.getTemperature();
+					if (temperature == null) {
+						continue;
+					}
 
-				log.info("{} 『{}』 SolarMpptMonitoringJob::main() - {}", Utility.indentEnd(), STATUS.SUCCESS, Utility.toStringPastTimeReadable(started));
-				return STATUS.SUCCESS;
+					if (previousTemperature == null) {
+						previousTemperature = temperature;
+					}
+
+					if (Utility.compareFloat(previousTemperature, temperature, 0.01f) != 0) {
+						allTheSame = false;
+						break;
+					}
+				}
+				if (allTheSame) {
+					RestartDriverJob.regist(JobService.getQueue1());
+					SolarMpptCrawlDetailsJob.regist(JobService.getQueue1());
+
+					log.info("{} 『{}』 SolarMpptMonitoringJob.Worker::run() - {}", Utility.indentEnd(), STATUS.SUCCESS, Utility.toStringPastTimeReadable(started));
+					return STATUS.SUCCESS;
+				}
+			} catch (Exception e) {
+				log.error("Exception:: {}", e.getLocalizedMessage(), e);
 			}
-		} catch (Exception e) {
-			log.error("Exception:: {}", e.getLocalizedMessage(), e);
+
+			log.info("{} 『{}』 SolarMpptMonitoringJob.Worker::run() - {}", Utility.indentEnd(), STATUS.ALEADY_DONE, Utility.toStringPastTimeReadable(started));
+			return STATUS.ALEADY_DONE;
 		}
 
-		log.info("{} 『{}』 SolarMpptMonitoringJob::main() - {}", Utility.indentEnd(), STATUS.ALEADY_DONE, Utility.toStringPastTimeReadable(started));
-		return STATUS.ALEADY_DONE;
 	}
 
 }

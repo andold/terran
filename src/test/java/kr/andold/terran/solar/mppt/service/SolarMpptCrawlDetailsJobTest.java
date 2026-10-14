@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SolarMpptCrawlDetailsJobTest {
-	@Autowired private SolarMpptCrawlDetailsJob job;
 	@Autowired private Environment env;
 	
 	@BeforeEach
@@ -26,7 +25,7 @@ class SolarMpptCrawlDetailsJobTest {
 
 	@Test
 	public void testSolarMpptCrawlDetailsJob() throws Exception {
-		STATUS result = job.call();
+		STATUS result = SolarMpptCrawlDetailsJob.builder().build().call();
 		log.info("{} {}", Utility.indentEnd(), result);
 	}
 

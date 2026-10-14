@@ -2,7 +2,6 @@ package kr.andold.terran.solar.mppt.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import kr.andold.utils.Utility;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SolarMpptMonitoringJobTest {
-	@Autowired private SolarMpptMonitoringJob job;
 
 	@BeforeEach
 	protected void setUp() throws Exception {
@@ -21,7 +19,7 @@ class SolarMpptMonitoringJobTest {
 
 	@Test
 	public void main() throws Exception {
-		STATUS result = job.call();
+		STATUS result = SolarMpptMonitoringJob.builder().build().call();
 		log.info("{}", result);
 	}
 
