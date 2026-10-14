@@ -1,6 +1,5 @@
 package kr.andold.terran.ics.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.andold.terran.ApplicationContextProvider;
@@ -11,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,38 +18,41 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-@Service
 public class IcsBackupJob implements JobInterface {
 	@Builder.Default @Getter @Setter private Long timeout = 60L;
 	@Setter private String dataPath;
 
-	@Autowired private IcsService icsService;
-
 	@Override
 	public STATUS call() throws Exception {
-		log.info("{} BackupJob::call()", Utility.indentStart());
+		log.info("{} IcsBackupJob::call()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		IcsBackupJob that = (IcsBackupJob) ApplicationContextProvider.getBean(IcsBackupJob.class);
-		that.setDataPath(dataPath);
-		STATUS result = that.main();
+		Worker worker = (Worker) ApplicationContextProvider.getBean(Worker.class);
+		STATUS result = worker.run(this);
 
-		log.info("{} {} BackupJob::call() - {}", Utility.indentEnd(), result, Utility.toStringPastTimeReadable(started));
+		log.info("{} {} IcsBackupJob::call() - {}", Utility.indentEnd(), result, Utility.toStringPastTimeReadable(started));
 		return result;
 	}
 
-	protected STATUS main() {
-		log.info("{} BackupJob::main()", Utility.indentStart());
-		long started = System.currentTimeMillis();
+	@RequiredArgsConstructor
+	@Service
+	public static class Worker {
+		private final IcsService icsService;
 
-		//	calendar.ics
-		String text = icsService.downloadIcs(1028);
-		String filename = String.format("%s/calendar.ics", dataPath);
-		Utility.write(filename, text);
-		log.debug("{} BackupJob::main(『{}』) - 『{}』『{}』", Utility.indentMiddle(), dataPath, filename, Utility.ellipsisEscape(text, 32, 32));
-		
-		log.info("{} {} BackupJob::main() - {}", Utility.indentEnd(), STATUS.SUCCESS, Utility.toStringPastTimeReadable(started));
-		return STATUS.SUCCESS;
+		protected STATUS run(IcsBackupJob job) {
+			log.info("{} IcsBackupJob.Worker::run()", Utility.indentStart());
+			long started = System.currentTimeMillis();
+
+			//	calendar.ics
+			String text = icsService.downloadIcs(1028);
+			String filename = String.format("%s/calendar.ics", job.dataPath);
+			Utility.write(filename, text);
+			log.debug("{} IcsBackupJob.Worker::run(『{}』) - 『{}』『{}』", Utility.indentMiddle(), job.dataPath, filename, Utility.ellipsisEscape(text, 32, 32));
+
+			log.info("{} {} IcsBackupJob.Worker::run() - {}", Utility.indentEnd(), STATUS.SUCCESS, Utility.toStringPastTimeReadable(started));
+			return STATUS.SUCCESS;
+		}
+
 	}
 
 }
