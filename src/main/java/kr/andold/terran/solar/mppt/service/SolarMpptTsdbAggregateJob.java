@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.andold.terran.ApplicationContextProvider;
@@ -24,6 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,68 +31,72 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-@Service
 public class SolarMpptTsdbAggregateJob implements JobInterface {
 	@Builder.Default @Getter @Setter private Long timeout = 300L;
 	@Getter @Setter private LocalDateTime start;
 	@Getter @Setter private LocalDateTime end;
-
-	@Autowired private TsdbService service;
 
 	@Override
 	public STATUS call() throws Exception {
 		log.info("{} SolarMpptTsdbAggregateJob::call()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		SolarMpptTsdbAggregateJob that = (SolarMpptTsdbAggregateJob) ApplicationContextProvider.getBean(SolarMpptTsdbAggregateJob.class);
-		that.setStart(start);
-		that.setEnd(end);
-		SolarMpptDomain result = that.main();
+		Worker worker = (Worker) ApplicationContextProvider.getBean(Worker.class);
+		SolarMpptDomain result = worker.run(this);
 
 		log.info("{} 『#{}』 SolarMpptTsdbAggregateJob::call() - {}", Utility.indentEnd(), result, Utility.toStringPastTimeReadable(started));
 		return STATUS.SUCCESS;
 	}
 
-	protected SolarMpptDomain main() throws Exception {
-		log.info("{} SolarMpptTsdbAggregateJob::main({} ~ {})", Utility.indentStart(), start, end);
-		long started = System.currentTimeMillis();
+	@RequiredArgsConstructor
+	@Service
+	public static class Worker {
+		private final TsdbService service;
 
-		LocalDateTime start1h = start.truncatedTo(ChronoUnit.HOURS);
-		LocalDateTime end1h = end.plusHours(1).truncatedTo(ChronoUnit.HOURS);
-		List<TsdbDomain> basis1h = service.search(TsdbParam.builder()
-				.group(TsdbDomain.TSDB_GROUP_BASIS)
-				.start(Date.from(start1h.toInstant(Utility.ZONE_OFFSET_KST)))
-				.end(Date.from(end1h.toInstant(Utility.ZONE_OFFSET_KST)))
-				.build());
-		List<TsdbDomain> afters1h = aggregate1h(basis1h);
-		List<TsdbDomain> befores1h = service.search(TsdbParam.builder()
-				.group(TsdbDomain.TSDB_GROUP_1H)
-				.start(Date.from(start1h.toInstant(Utility.ZONE_OFFSET_KST)))
-				.end(Date.from(end1h.toInstant(Utility.ZONE_OFFSET_KST)))
-				.build());
-		CrudList<TsdbDomain> crudBasis1h = service.differ(befores1h, afters1h);
-		int resultBasis1h = service.batch(crudBasis1h);
-		log.info("{} SolarMpptTsdbAggregateJob::main({} ~ {}) - 『{}』『#{}』", Utility.indentMiddle(), start, end, crudBasis1h, resultBasis1h);
-		
-		LocalDateTime start1d = start.truncatedTo(ChronoUnit.DAYS);
-		LocalDateTime end1d = end.plusDays(1).truncatedTo(ChronoUnit.DAYS);
-		List<TsdbDomain> basis1d = service.search(TsdbParam.builder()
-				.group(TsdbDomain.TSDB_GROUP_BASIS)
-				.start(Date.from(start1d.toInstant(Utility.ZONE_OFFSET_KST)))
-				.end(Date.from(end1d.toInstant(Utility.ZONE_OFFSET_KST)))
-				.build());
-		List<TsdbDomain> afters1d = aggregate1d(basis1d);
-		List<TsdbDomain> befores1d = service.search(TsdbParam.builder()
-				.group(TsdbDomain.TSDB_GROUP_1D)
-				.start(Date.from(start1d.toInstant(Utility.ZONE_OFFSET_KST)))
-				.end(Date.from(end1d.toInstant(Utility.ZONE_OFFSET_KST)))
-				.build());
-		CrudList<TsdbDomain> crudBasis1d = service.differ(befores1d, afters1d);
-		int resultBasis1d = service.batch(crudBasis1d);
-		log.info("{} SolarMpptTsdbAggregateJob::main({} ~ {}) - 『{}』『#{}』", Utility.indentMiddle(), start, end, crudBasis1d, resultBasis1d);
-		
-		log.info("{} 『{}』 SolarMpptTsdbAggregateJob::main({} ~ {}) - {}", Utility.indentEnd(), resultBasis1h, start, end, Utility.toStringPastTimeReadable(started));
-		return null;
+		protected SolarMpptDomain run(SolarMpptTsdbAggregateJob job) throws Exception {
+			LocalDateTime start = job.start;
+			LocalDateTime end = job.end;
+			log.info("{} SolarMpptTsdbAggregateJob.Worker::run({} ~ {})", Utility.indentStart(), start, end);
+			long started = System.currentTimeMillis();
+
+			LocalDateTime start1h = start.truncatedTo(ChronoUnit.HOURS);
+			LocalDateTime end1h = end.plusHours(1).truncatedTo(ChronoUnit.HOURS);
+			List<TsdbDomain> basis1h = service.search(TsdbParam.builder()
+					.group(TsdbDomain.TSDB_GROUP_BASIS)
+					.start(Date.from(start1h.toInstant(Utility.ZONE_OFFSET_KST)))
+					.end(Date.from(end1h.toInstant(Utility.ZONE_OFFSET_KST)))
+					.build());
+			List<TsdbDomain> afters1h = aggregate1h(basis1h);
+			List<TsdbDomain> befores1h = service.search(TsdbParam.builder()
+					.group(TsdbDomain.TSDB_GROUP_1H)
+					.start(Date.from(start1h.toInstant(Utility.ZONE_OFFSET_KST)))
+					.end(Date.from(end1h.toInstant(Utility.ZONE_OFFSET_KST)))
+					.build());
+			CrudList<TsdbDomain> crudBasis1h = service.differ(befores1h, afters1h);
+			int resultBasis1h = service.batch(crudBasis1h);
+			log.info("{} SolarMpptTsdbAggregateJob.Worker::run({} ~ {}) - 『{}』『#{}』", Utility.indentMiddle(), start, end, crudBasis1h, resultBasis1h);
+
+			LocalDateTime start1d = start.truncatedTo(ChronoUnit.DAYS);
+			LocalDateTime end1d = end.plusDays(1).truncatedTo(ChronoUnit.DAYS);
+			List<TsdbDomain> basis1d = service.search(TsdbParam.builder()
+					.group(TsdbDomain.TSDB_GROUP_BASIS)
+					.start(Date.from(start1d.toInstant(Utility.ZONE_OFFSET_KST)))
+					.end(Date.from(end1d.toInstant(Utility.ZONE_OFFSET_KST)))
+					.build());
+			List<TsdbDomain> afters1d = aggregate1d(basis1d);
+			List<TsdbDomain> befores1d = service.search(TsdbParam.builder()
+					.group(TsdbDomain.TSDB_GROUP_1D)
+					.start(Date.from(start1d.toInstant(Utility.ZONE_OFFSET_KST)))
+					.end(Date.from(end1d.toInstant(Utility.ZONE_OFFSET_KST)))
+					.build());
+			CrudList<TsdbDomain> crudBasis1d = service.differ(befores1d, afters1d);
+			int resultBasis1d = service.batch(crudBasis1d);
+			log.info("{} SolarMpptTsdbAggregateJob.Worker::run({} ~ {}) - 『{}』『#{}』", Utility.indentMiddle(), start, end, crudBasis1d, resultBasis1d);
+
+			log.info("{} 『{}』 SolarMpptTsdbAggregateJob.Worker::run({} ~ {}) - {}", Utility.indentEnd(), resultBasis1h, start, end, Utility.toStringPastTimeReadable(started));
+			return null;
+		}
+
 	}
 
 	public static List<TsdbDomain> aggregate1h(List<TsdbDomain> domains) {

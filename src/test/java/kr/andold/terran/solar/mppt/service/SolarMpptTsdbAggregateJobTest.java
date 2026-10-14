@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SolarMpptTsdbAggregateJobTest {
-	@Autowired private SolarMpptTsdbAggregateJob job;
+	@Autowired private SolarMpptTsdbAggregateJob.Worker worker;
 	@Autowired private TsdbService service;
 
 	@BeforeEach
@@ -53,9 +53,11 @@ public class SolarMpptTsdbAggregateJobTest {
 
 	@Test
 	public void testMain() throws Exception {
-		job.setStart(LocalDateTime.now().minusDays(7));
-		job.setEnd(LocalDateTime.now());
-		SolarMpptDomain result = job.main();
+		SolarMpptTsdbAggregateJob job = SolarMpptTsdbAggregateJob.builder()
+				.start(LocalDateTime.now().minusDays(7))
+				.end(LocalDateTime.now())
+				.build();
+		SolarMpptDomain result = worker.run(job);
 		log.info("{}", result);
 	}
 

@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SolarMpptTsdbPutJobTest {
-	@Autowired private SolarMpptTsdbPutJob job;
+	@Autowired private SolarMpptTsdbPutJob.Worker worker;
 	@Autowired private SolarMpptService service;
 
 	@BeforeEach
@@ -27,8 +27,8 @@ public class SolarMpptTsdbPutJobTest {
 		String filename = "solar-mppt-20250317.json";
 		String text = Utility.readClassPathFile(filename);
 		CrudList<SolarMpptDomain> crudSolarMpptDomain = service.upload(text);
-		job.setCrud(crudSolarMpptDomain);
-		CrudList<TsdbDomain> result = job.main();
+		SolarMpptTsdbPutJob job = SolarMpptTsdbPutJob.builder().crud(crudSolarMpptDomain).build();
+		CrudList<TsdbDomain> result = worker.run(job);
 		log.info("{}", result);
 	}
 
